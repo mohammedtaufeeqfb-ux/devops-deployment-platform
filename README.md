@@ -4,4 +4,4 @@ Production AWS DevOps Platform
 
 Owner: Mohammed Taufeeq
 
-Version: 1.0
+Version: 21.0
