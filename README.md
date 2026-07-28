@@ -2,6 +2,4 @@
 
 Production AWS DevOps Platform
 
-Owner: Mohammed Taufeeq
-
-Version: 2.0git 
+This repository contains Terraform, Kubernetes, GitHub Actions, and AWS infrastructure code.
