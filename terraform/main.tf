@@ -1,11 +1,5 @@
-resource "aws_instance" "web_server" {
-  ami           = data.aws_ami.amazon_linux.id
-  instance_type = var.instance_type
+module "networking" {
+  source = "./modules/networking"
 
-  tags = merge(
-  local.common_tags,
-  {
-    Name = local.common_name
-  }
- )
+  project_name = var.project_name
 }
