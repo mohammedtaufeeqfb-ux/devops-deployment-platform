@@ -27,3 +27,17 @@ Key Benefits:
 - Repeatable deployments
 - Version-controlled infrastructure
 - Multi-AZ architecture
+
+## VPC
+
+Resource:
+- AWS VPC
+
+CIDR:
+- 10.0.0.0/16
+
+Purpose:
+Provide an isolated network boundary for Kubernetes workloads and AWS infrastructure.
+
+Why:
+All EKS nodes, load balancers, and application components require networking and routing.
