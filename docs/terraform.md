@@ -41,3 +41,17 @@ Provide an isolated network boundary for Kubernetes workloads and AWS infrastruc
 
 Why:
 All EKS nodes, load balancers, and application components require networking and routing.
+
+
+## Subnet Design
+
+Public Subnets:
+- Host internet-facing resources such as Application Load Balancers.
+
+Private Subnets:
+- Host Kubernetes worker nodes and application workloads.
+
+Benefits:
+- Improved security
+- High availability across Availability Zones
+- Separation of public and private resources
