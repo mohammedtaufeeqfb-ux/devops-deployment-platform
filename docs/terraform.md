@@ -55,3 +55,19 @@ Benefits:
 - Improved security
 - High availability across Availability Zones
 - Separation of public and private resources
+
+## Networking Foundation
+
+Implemented AWS networking foundation using Terraform modules.
+
+Resources:
+- VPC
+- Public Subnets across 2 AZs
+- Private Subnets across 2 AZs
+- Internet Gateway
+- Public Route Table
+
+Outcome:
+- Multi-AZ architecture
+- Public/Private network segregation
+- EKS-ready network design
