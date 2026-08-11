@@ -18,7 +18,7 @@ resource "aws_iam_role" "ec2_role" {
 }
 resource "aws_iam_role_policy_attachment" "readonly" {
 
-  role       = aws_iam_role.ec2_role.name
+  role = aws_iam_role.ec2_role.name
 
   policy_arn = "arn:aws:iam::aws:policy/ReadOnlyAccess"
 }
@@ -27,4 +27,33 @@ resource "aws_iam_instance_profile" "ec2_profile" {
   name = "${var.project_name}-instance-profile"
 
   role = aws_iam_role.ec2_role.name
+}
+
+resource "aws_iam_policy" "ecr_push_policy" {
+  name = "${var.project_name}-ecr-push-policy"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+
+    Statement = [
+      {
+        Effect = "Allow"
+
+        Action = [
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:CompleteLayerUpload",
+          "ecr:InitiateLayerUpload",
+          "ecr:PutImage",
+          "ecr:UploadLayerPart"
+        ]
+
+        Resource = "*"
+      }
+    ]
+  })
+}
+resource "aws_iam_role_policy_attachment" "ecr_push_attach" {
+  role       = aws_iam_role.ec2_role.name
+  policy_arn = aws_iam_policy.ecr_push_policy.arn
 }

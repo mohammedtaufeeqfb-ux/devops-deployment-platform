@@ -17,15 +17,22 @@ module "iam" {
 
   project_name = var.project_name
 }
-module "ec2" {
 
+module "ec2" {
   source = "./modules/ec2"
 
-  project_name = var.project_name
+  ami_id        = "ami-0f58b397bc5c1f2e8"
+  instance_type = "t3.micro"
+  key_name      = var.key_name
 
-  subnet_id = module.networking.public_subnet_a_id
-
+  subnet_id         = module.networking.public_subnet_a_id
   security_group_id = module.security.security_group_id
 
   instance_profile_name = module.iam.instance_profile_name
+  project_name          = var.project_name
+}
+
+module "ecr" {
+  source       = "./modules/ecr"
+  project_name = var.project_name
 }

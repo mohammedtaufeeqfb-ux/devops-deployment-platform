@@ -1,4 +1,12 @@
-variable "project_name" {
+variable "ami_id" {
+  type = string
+}
+
+variable "instance_type" {
+  type = string
+}
+
+variable "key_name" {
   type = string
 }
 
@@ -11,5 +19,9 @@ variable "security_group_id" {
 }
 
 variable "instance_profile_name" {
+  type = string
+}
+
+variable "project_name" {
   type = string
 }
