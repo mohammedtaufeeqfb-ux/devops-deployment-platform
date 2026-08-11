@@ -36,3 +36,13 @@ module "ecr" {
   source       = "./modules/ecr"
   project_name = var.project_name
 }
+
+module "eks" {
+  source = "./modules/eks"
+
+  project_name = var.project_name
+
+  subnet_ids = module.networking.private_subnet_ids
+
+  cluster_role_arn = module.iam.eks_cluster_role_arn
+}
