@@ -131,25 +131,25 @@ resource "aws_iam_role" "github_actions_role" {
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
 
-    Statement = [{
-      Effect = "Allow"
+    Statement = [
+      {
+        Effect = "Allow"
 
-      Principal = {
-        Federated = aws_iam_openid_connect_provider.github.arn
-      }
-
-      Action = "sts:AssumeRoleWithWebIdentity"
-
-      Condition = {
-        StringEquals = {
-          "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
+        Principal = {
+          Federated = aws_iam_openid_connect_provider.github.arn
         }
 
-        StringLike = {
-          "token.actions.githubusercontent.com:sub" = "repo:mohammedtaufeeqfb-ux/devops-deployment-platform:ref:refs/heads/main"
+        Action = "sts:AssumeRoleWithWebIdentity"
+
+        Condition = {
+          StringEquals = {
+            "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
+
+            "token.actions.githubusercontent.com:sub" = "repo:mohammedtaufeeqfb-ux@275598626/devops-deployment-platform@1330647680:ref:refs/heads/main"
+          }
         }
       }
-    }]
+    ]
   })
 }
 
