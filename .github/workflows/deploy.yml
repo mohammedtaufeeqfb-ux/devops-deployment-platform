@@ -9,19 +9,50 @@ permissions:
   id-token: write
   contents: read
 
+env:
+  AWS_REGION: ap-south-1
+  ECR_REGISTRY: 410937487281.dkr.ecr.ap-south-1.amazonaws.com
+  ECR_REPOSITORY: project-phoenix-repo
+  HELM_RELEASE: phoenix-app
+  HELM_CHART: ./helm/phoenix-app
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Get source code
       - name: Checkout code
         uses: actions/checkout@v7
 
+      # 2. Authenticate GitHub Actions with AWS using OIDC
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v6.2.3
         with:
           role-to-assume: arn:aws:iam::410937487281:role/project-phoenix-github-actions-role
-          aws-region: ap-south-1
+          aws-region: ${{ env.AWS_REGION }}
 
+      # 3. Verify AWS identity
       - name: Verify AWS identity
         run: aws sts get-caller-identity
+
+      # 4. Login Docker to ECR
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # 5. Create immutable image tag from Git commit
+      - name: Set image tag
+        run: echo "IMAGE_TAG=${GITHUB_SHA}" >> "$GITHUB_ENV"
+
+      # 6. Build Docker image
+      - name: Build Docker image
+        run: |
+          docker build \
+            -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
+            .
+
+      # 7. Push image to ECR
+      - name: Push Docker image to ECR
+        run: |
+          docker push \
+            $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
