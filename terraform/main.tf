@@ -40,8 +40,10 @@ module "ecr" {
 module "eks" {
   source = "./modules/eks"
 
-  project_name     = var.project_name
-  subnet_ids       = module.networking.private_subnet_ids
+  project_name       = var.project_name
+  cluster_subnet_ids = module.networking.private_subnet_ids
+  node_subnet_ids    = module.networking.public_subnet_ids
+
   cluster_role_arn = module.iam.eks_cluster_role_arn
   node_role_arn    = module.iam.eks_node_role_arn
 }

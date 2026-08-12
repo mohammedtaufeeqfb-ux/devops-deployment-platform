@@ -1,0 +1,11 @@
+replicaCount: 2
+
+image:
+  repository: 410937487281.dkr.ecr.ap-south-1.amazonaws.com/project-phoenix-repo
+  tag: latest
+  pullPolicy: Always
+
+service:
+  type: LoadBalancer
+  port: 80
+  targetPort: 80

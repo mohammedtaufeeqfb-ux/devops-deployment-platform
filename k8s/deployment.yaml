@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: phoenix-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: phoenix-app
+  template:
+    metadata:
+      labels:
+        app: phoenix-app
+    spec:
+      containers:
+        - name: phoenix-app
+          image: 410937487281.dkr.ecr.ap-south-1.amazonaws.com/project-phoenix-repo:latest
+          ports:
+            - containerPort: 80
