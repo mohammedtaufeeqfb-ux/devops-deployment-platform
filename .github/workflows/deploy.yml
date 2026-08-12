@@ -13,14 +13,18 @@ env:
   AWS_REGION: ap-south-1
   ECR_REGISTRY: 410937487281.dkr.ecr.ap-south-1.amazonaws.com
   ECR_REPOSITORY: project-phoenix-repo
+  EKS_CLUSTER: project-phoenix-cluster
   HELM_RELEASE: phoenix-app
   HELM_CHART: ./helm/phoenix-app
+  K8S_NAMESPACE: default
 
 jobs:
   deploy:
+    name: Build and Deploy
     runs-on: ubuntu-latest
 
     steps:
+
       # 1. Get source code
       - name: Checkout code
         uses: actions/checkout@v7
@@ -34,15 +38,17 @@ jobs:
 
       # 3. Verify AWS identity
       - name: Verify AWS identity
-        run: aws sts get-caller-identity
+        run: |
+          aws sts get-caller-identity
 
-      # 4. Login Docker to ECR
+      # 4. Login to ECR
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
 
-      # 5. Create immutable image tag from Git commit
+      # 5. Create immutable image tag
       - name: Set image tag
-        run: echo "IMAGE_TAG=${GITHUB_SHA}" >> "$GITHUB_ENV"
+        run: |
+          echo "IMAGE_TAG=${GITHUB_SHA}" >> "$GITHUB_ENV"
 
       # 6. Build Docker image
       - name: Build Docker image
@@ -56,3 +62,49 @@ jobs:
         run: |
           docker push \
             $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      # 8. Install Helm
+      - name: Setup Helm
+        uses: azure/setup-helm@v5
+
+      # 9. Connect kubectl to EKS
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig \
+            --region $AWS_REGION \
+            --name $EKS_CLUSTER
+
+      # 10. Verify cluster access
+      - name: Verify Kubernetes access
+        run: |
+          kubectl get nodes
+
+      # 11. Deploy using Helm
+      - name: Deploy with Helm
+        run: |
+          helm upgrade --install $HELM_RELEASE $HELM_CHART \
+            --namespace $K8S_NAMESPACE \
+            --create-namespace \
+            --set image.repository=$ECR_REGISTRY/$ECR_REPOSITORY \
+            --set image.tag=$IMAGE_TAG \
+            --wait \
+            --timeout 5m
+
+      # 12. Verify rollout
+      - name: Verify deployment
+        run: |
+          kubectl rollout status \
+            deployment/phoenix-app \
+            --namespace $K8S_NAMESPACE \
+            --timeout=5m
+
+      # 13. Verify final state
+      - name: Check pods
+        run: |
+          kubectl get pods \
+            --namespace $K8S_NAMESPACE
+
+      - name: Check Helm release
+        run: |
+          helm list \
+            --namespace $K8S_NAMESPACE
