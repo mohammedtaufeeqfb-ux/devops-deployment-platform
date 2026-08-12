@@ -78,7 +78,7 @@ jobs:
       # 10. Verify cluster access
       - name: Verify Kubernetes access
         run: |
-          kubectl get nodes
+          kubectl get pods -n default
 
       # 11. Deploy using Helm
       - name: Deploy with Helm
