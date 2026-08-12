@@ -88,8 +88,9 @@ jobs:
             --create-namespace \
             --set image.repository=$ECR_REGISTRY/$ECR_REPOSITORY \
             --set image.tag=$IMAGE_TAG \
+            --force-conflicts \
             --wait \
-            --timeout 5m
+            --timeout 10m
 
       # 12. Verify rollout
       - name: Verify deployment
